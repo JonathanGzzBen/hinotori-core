@@ -1,0 +1,12 @@
+#ifndef HINOTORICORE_GLOBAL_H
+#define HINOTORICORE_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(HINOTORICORE_LIBRARY)
+#  define HINOTORICORE_EXPORT Q_DECL_EXPORT
+#else
+#  define HINOTORICORE_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // HINOTORICORE_GLOBAL_H
