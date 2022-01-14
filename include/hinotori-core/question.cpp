@@ -9,26 +9,7 @@ Question::Question(QString message, qsizetype correctAnswerIndex,
       possibleAnswers{possibleAnswers},
       QObject{parent} {}
 
-bool Question::SaveQuestions(QList<QSharedPointer<Question>> &questions,
-                             QString filename) {
-  QFile saveFile(filename);
-  if (!saveFile.open(QIODevice::WriteOnly)) {
-    qWarning("Couldn't open save file.");
-    return false;
-  }
-
-  QJsonArray questionsArray;
-  for (const auto &question : questions) {
-    QJsonObject questionObj;
-    question->write(questionObj);
-    questionsArray.append(questionObj);
-  }
-
-  saveFile.write(QJsonDocument(questionsArray).toJson());
-  return true;
-}
-
-void Question::read(const QJsonObject &json) {
+void Question::Read(const QJsonObject &json) {
   if (json.contains(kMessageJsonKey) && json[kMessageJsonKey].isString()) {
     message = json[kMessageJsonKey].toString();
   }
@@ -38,20 +19,28 @@ void Question::read(const QJsonObject &json) {
   }
   if (json.contains(kPossibleAnswersJsonKey) &&
       json[kPossibleAnswersJsonKey].isArray()) {
-    QJsonArray questionsArray = json[kPossibleAnswersJsonKey].toArray();
+    QJsonArray possibleAnswersArray = json[kPossibleAnswersJsonKey].toArray();
     possibleAnswers.clear();
-    possibleAnswers.reserve(questionsArray.size());
+    possibleAnswers.reserve(possibleAnswersArray.size());
     for (int possibleAnswerIndex{0};
-         possibleAnswerIndex < possibleAnswers.size(); ++possibleAnswerIndex) {
-      possibleAnswers[possibleAnswerIndex] =
-          questionsArray[possibleAnswerIndex].toString();
+         possibleAnswerIndex < possibleAnswersArray.size(); ++possibleAnswerIndex) {
+      possibleAnswers.append(possibleAnswersArray[possibleAnswerIndex].toString());
     }
   }
 }
 
-void Question::write(QJsonObject &json) const {
+void Question::Write(QJsonObject &json) const {
   json[kMessageJsonKey] = message;
   json[kCorrectAnswerIndexJsonKey] = correctAnswerIndex;
-  QJsonArray possibleAnswersArray{QJsonArray::fromStringList(possibleAnswers)};
+  QJsonArray possibleAnswersArray{};
+  for(const auto&possibleAnswer: possibleAnswers) {
+    possibleAnswersArray.append(QJsonValue{possibleAnswer});
+  }
   json[kPossibleAnswersJsonKey] = possibleAnswersArray;
 }
+
+QString Question::Message() { return message; }
+
+qsizetype Question::CorrrectAnswerIndex() { return correctAnswerIndex; }
+
+QStringList Question::PossibleAnswers() { return possibleAnswers; }
