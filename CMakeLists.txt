@@ -14,10 +14,10 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
 
 add_library(hinotori-core SHARED
         include/hinotori-core/hinotori-core_global.h
-        include/hinotori-core/hinotori.cpp
-        include/hinotori-core/hinotori.h
         include/hinotori-core/question.h
         include/hinotori-core/question.cpp
+        include/hinotori-core/questionnaire.h
+        include/hinotori-core/questionnaire.cpp
 )
 
 target_link_libraries(hinotori-core PRIVATE Qt${QT_VERSION_MAJOR}::Core)
